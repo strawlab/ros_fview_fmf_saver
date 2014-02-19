@@ -36,6 +36,10 @@ if __name__ == "__main__":
     req.nth_frame.data = args.nth_frame
     req.save_framenumbers_as_timestamps.data = args.save_framenumbers_as_timestamps
     response = start_saving_proxy( req )
-    print response
+
+    if response.started_ok.data:
+        rospy.loginfo('FMF starting to save')
+    else:
+        rospy.logerror('not able to start saving FMF')
     
-    rospy.spin()
+    rospy.signal_shutdown('goodbye')
