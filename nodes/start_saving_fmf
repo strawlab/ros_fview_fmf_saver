@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+import argparse
+
+import roslib
+roslib.load_manifest('ros_fview_fmf_saver')
+import rospy
+import ros_fview_fmf_saver.srv
+import std_msgs.msg
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--fview-name', type=str, default='/fview_ttm', help='ROS prefix of FView node')
+    parser.add_argument(
+        '--fname-prefix', type=str, default='DATA', help='prefix of saved filename')
+    parser.add_argument(
+        '--allocate-buffer-size', type=int, default=120*60*5, help='number of frames to buffer')
+    parser.add_argument(
+        '--nth-frame', type=int, default=1, help='save every Nth frame')
+    parser.add_argument(
+        '--no-save-framenumbers-as-timestamps', dest='save_framenumbers_as_timestamps',
+        action='store_false', default=True, help='save timestamps, not framenumbers')
+
+    # use argparse, but only after ROS did its thing
+    argv = rospy.myargv()
+    args = parser.parse_args(argv[1:])
+
+    base = args.fview_name
+
+    rospy.init_node('start_saving_fmf', anonymous=True, disable_signals=True)
+
+    start_saving_proxy = rospy.ServiceProxy(base+'/start_saving_fmf', ros_fview_fmf_saver.srv.StartSavingFMF)
+    req = ros_fview_fmf_saver.srv.StartSavingFMFRequest()
+    req.fname_prefix.data = args.fname_prefix
+    req.allocate_buffer_size.data = args.allocate_buffer_size
+    req.nth_frame.data = args.nth_frame
+    req.save_framenumbers_as_timestamps.data = args.save_framenumbers_as_timestamps
+    response = start_saving_proxy( req )
+    print response
+    
+    rospy.spin()

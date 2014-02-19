@@ -1,0 +1,7 @@
+std_msgs/String fname_prefix                   # prefix of FMF name
+std_msgs/UInt32 allocate_buffer_size           # number of frames
+std_msgs/UInt16 nth_frame                      # save every Nth frame
+std_msgs/UInt8 save_framenumbers_as_timestamps # boolean: save framenumbers?
+---
+std_msgs/UInt8 started_ok
+std_msgs/String error_message
